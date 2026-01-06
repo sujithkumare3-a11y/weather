@@ -1,0 +1,255 @@
+ 
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif; 
+  box-sizing: border-box;
+}
+
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+
+/* Card styling */
+.card {
+  width: 100%;
+  max-width: 475px;
+  background: linear-gradient(135deg, #b4da5a, #3a25c5c5);
+  color: #f7ebeb;
+  margin: 0;
+  border-radius: 20px;
+  padding: 40px 35px;
+  text-align: center;
+} 
+
+/* Title styling */
+ 
+.card h1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin-bottom: 24px;
+}
+    
+
+
+/* Search area styling */
+ .search {
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 auto 24px;
+  gap: 12px;
+} 
+
+ .search input { 
+  border: 0;
+  outline: 0;
+  background: #ebfffc;
+  color: #555;
+  padding: 10px 20px;
+  height: 60px;
+  border-radius: 30px;
+  display:flex;
+  font-size: 18px;   
+} 
+
+ #search-btn { 
+  padding: 10px 25px;
+  font-size: 16px;
+  background: #4680e4;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  margin-left: 12px;
+}
+
+#search-btn:hover {
+  background: #a0a8a6;
+} 
+
+#discription {
+  font-size: 20px;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin-top: 10px;
+  color: #333;
+  text-align: center;
+}
+
+/* 🔸 Media Queries for Responsive Design */
+
+/* 📱 Small screens (mobile phones) */
+@media (max-width: 480px) {
+  .search {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .search input {
+    width: 100%;
+    height: 50px;
+    font-size: 16px;
+  }
+
+  #search-btn {
+    width: 100%;
+    height: 50px;
+    font-size: 16px;
+    margin-left: 0;
+  }
+} 
+
+/* 📱 Medium screens (tablets) */
+ @media (min-width: 481px) and (max-width: 768px) {
+  .search {
+    max-width: 400px;
+    gap: 10px;
+  }
+
+  .search input {
+    height: 55px;
+    font-size: 17px;
+  }
+
+  #search-btn {
+    padding: 10px 20px;
+    font-size: 15px;
+  }
+} 
+
+/* 💻 Large screens (desktops) */
+ @media (min-width: 769px) {
+  .search {
+    max-width: 480px;
+  }
+
+  .search input {
+    font-size: 18px;
+  }
+}
+
+
+#weather-icon {
+  width: 100px;
+  height: 100px;
+
+  margin: 0 auto 16px;
+  background: #b45e5e;
+  border-radius: 50%;
+  box-shadow: 0 4px 20px rgba(131, 99, 99, 0.07);
+
+  border: 2px solid #53978d;
+}
+
+i {
+  font-size: 48px;
+  color: #d1e2ee;
+}
+
+@media (max-width: 600px) {
+  .weather h1 {
+    font-size: 60px;
+  }
+  .weather h2 {
+    font-size: 50px;
+  }
+  .col p {
+    font-size: 16px;
+  }
+  #weather-icon {
+    width: 80px;
+    height: 80px;
+  }
+} 
+
+
+/* Details section */
+ .details {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 25px;
+  gap: 20px;
+  flex-wrap: wrap;
+} 
+
+/* Each column (Humidity / Wind / cloud) */
+ .col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+} 
+
+/* SVG (Humidity icon) */
+ .col svg {
+  width: 40px;
+  height: 40px;
+  fill: #00bfff;
+  animation: dropPulse 2s infinite ease-in-out;
+} 
+
+/* Font Awesome (Wind icon) */
+ .col i {
+  font-size: 36px;
+  color: #dae0e6;
+  margin-bottom: 6px;
+} 
+
+/* Font Awesome (cloud icon) */
+ .col i {
+  font-size: 36px;
+  color: #f4f7fa;
+  margin-bottom: 6px;
+}
+
+/* Humidity & Wind text, cloud*/
+ .col p {
+  margin: 3px 0;
+  font-size: 20px;
+}
+/* cloud */
+ .col p {
+  margin: 3px 0;
+  font-size: 20px;
+}  
+
+
+/* Bold values */
+ .col p.humidity,
+.col p.wind,
+.col p.colud {
+  font-weight: bold;
+  font-size: 20px;
+  color: #fff;
+}
+
+/* Animation */
+ @keyframes dropPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  } 
+} 
+   

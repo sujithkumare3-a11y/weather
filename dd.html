@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>FD Calculator — Live Currency Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #7b89a3;
+    --card: #5c5c5698;
+    --accent: #582d9e;
+    --muted: #051316;
+    --radius: 12px;
+  }
+  *{box-sizing:border-box}
+  body{
+    font-family: 'Inter', system-ui, Arial, sans-serif;
+    background: linear-gradient(180deg,var(--bg),#dbdfe6);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0;
+    padding:24px;
+  }
+  .title{
+    text-align:center;
+    margin-bottom:24px;
+  }
+
+  .card{
+    width:100%;
+    max-width:720px;
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:20px;
+    box-shadow:0 10px 30px rgba(22,102,242,0.08);
+  }
+  h1{margin:0 0 12px; color:var(--accent); font-size:20px}
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:12px;
+    align-items: center;
+  }
+  .field{
+    display:flex;
+    flex-direction:column;
+  }
+  label{font-size:13px; color:var(--muted); margin-bottom:6px}
+  input[type="number"], select, input[type="text"]{
+    padding:10px 12px;
+    border:1px solid #596885;
+    border-radius:8px;
+    font-size:15px;
+    outline:none;
+  }
+  .inline {
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .preview {
+    margin-top:8px;
+    font-size:18px;
+    font-weight:600;
+    color:#0f1724;
+  }
+  .controls {
+    margin-top:14px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
+  button{
+    background:var(--accent);
+    color:rgb(241, 232, 232);
+    padding:10px 14px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  button.secondary{
+    background:#eef3ff; color:var(--accent);
+  }
+ 
+ button.secondary:hover{
+    background:#c597a9;
+  } 
+
+ button.calculator:hover{
+    background:#1fac34;
+  }
+  
+  .result{
+    margin-top:18px;
+    padding:14px;
+    border-radius:10px;
+    background:#fbfdff;
+    border:1px solid #eef4ff;
+  }
+  .muted { color:var(--muted); font-size:13px; }
+  @media (max-width:640px){
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>FD Calculator — Live Currency Preview</h1>
+
+    <div class="grid">
+      <div class="field">
+        <label>Amount</label>
+        <input id="amount" type="number" min="0" step="any" placeholder="Enter principal amount">
+        <div class="preview muted" id="amountPreview">Preview: —</div>
+      </div>
+
+      <div class="field">
+        <label>Currency</label>
+        <div class="inline">
+          <select id="currency">
+            <option value="INR">₹ INR</option>
+            <option value="USD">$ USD</option>
+            <option value="EUR">€ EUR</option>
+            <option value="GBP">£ GBP</option>
+            <option value="JPY">¥ JPY</option>
+            <option value="AUD">$ AUD</option>
+            <option value="custom">Custom symbol</option>
+          </select>
+          <input id="customSymbol" type="text" placeholder="e.g. ₹ or Rs" style="width:110px; display:none;">
+        </div>
+        <div class="muted" style="margin-top:8px">Choose currency to preview formatted amount.</div>
+      </div>
+
+      <div class="field">
+        <label>Interest Rate (% per year)</label>
+        <input id="rate" type="number" min="0" step="0.01" value="6.5">
+      </div>
+
+      <div class="field">
+        <label>Tenure</label>
+        <div class="inline">
+          <input id="tenure" type="number" min="0" step="1" value="12" style="width:100px;">
+          <select id="tenureUnit" style="width:140px;">
+            <option value="months">Months</option>
+            <option value="years">Years</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Interest Type</label>
+        <select id="interestType">
+          <option value="compound">Compound Interest (compounded yearly)</option>
+          <option value="simple">Simple Interest</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Compounding Frequency (if compound)</label>
+        <select id="freq">
+          <option value="1">Yearly</option>
+          <option value="2">Half-Yearly</option>
+          <option value="4">Quarterly</option>
+          <option value="12">Monthly</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="calcBtn" class="calculator">Calculate</button>
+      <button id="resetBtn" class="secondary">Reset</button>
+      <div style="margin-left:auto" class="muted">Preview updates while you type.</div>
+    </div>
+
+    <div class="result" id="resultBox">
+      <div class="muted">Maturity Amount:</div>
+      <div id="maturity" style="font-size:20px; font-weight:700">--</div>
+      <div class="muted" id="interestEarned" style="margin-top:8px">--</div>
+    </div>
+  </div>
+
+<script>
+  // Helper: map currency to Intl locale & symbol fallback
+  const currencyLocaleMap = {
+    INR: {locale: 'en-IN', currency: 'INR'},
+    USD: {locale: 'en-US', currency: 'USD'},
+    EUR: {locale: 'de-DE', currency: 'EUR'},
+    GBP: {locale: 'en-GB', currency: 'GBP'},
+    JPY: {locale: 'ja-JP', currency: 'JPY'},
+    AUD: {locale: 'en-AU', currency: 'AUD'}
+  };
+
+  // Elements
+  const amountEl = document.getElementById('amount');
+  const currencyEl = document.getElementById('currency');
+  const customSymbolEl = document.getElementById('customSymbol');
+  const amountPreviewEl = document.getElementById('amountPreview');
+  const rateEl = document.getElementById('rate');
+  const tenureEl = document.getElementById('tenure');
+  const tenureUnitEl = document.getElementById('tenureUnit');
+  const calcBtn = document.getElementById('calcBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const resultBox = document.getElementById('resultBox');
+  const maturityEl = document.getElementById('maturity');
+  const interestEarnedEl = document.getElementById('interestEarned');
+  const interestTypeEl = document.getElementById('interestType');
+  const freqEl = document.getElementById('freq');
+
+  // Format number using Intl.NumberFormat or simple fallback
+  const formatAmount = (value, currencyCode, customSymbol) => {
+    if (customSymbol) {
+      // format with thousand separators, keep custom symbol prefix
+      try {
+        const nf = new Intl.NumberFormat(undefined, {maximumFractionDigits: 2});
+        return `${customSymbol} ${nf.format(value)}`;
+      } catch (e) {
+        return `${customSymbol} ${Number(value).toFixed(2)}`;
+      }
+    }
+    if (currencyCode && currencyLocaleMap[currencyCode]) {
+      const {locale, currency} = currencyLocaleMap[currencyCode];
+      return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(value);
+    }
+    // fallback
+    return Number(value).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+  };
+
+  // Live preview update (arrow function)
+  const updatePreview = () => {
+    const val = parseFloat(amountEl.value);
+    const currencyCode = currencyEl.value;
+    const customSymbol = (currencyCode === 'custom') ? (customSymbolEl.value.trim() || '¤') : null;
+
+    if (isNaN(val) || val <= 0) {
+      amountPreviewEl.textContent = 'Preview: —';
+      return;
+    }
+    amountPreviewEl.textContent = 'Preview: ' + formatAmount(val, currencyCode === 'custom' ? null : currencyCode, customSymbol);
+  };
+
+  // Show/hide custom symbol input
+  currencyEl.addEventListener('change', e => {
+    customSymbolEl.style.display = (e.target.value === 'custom') ? 'inline-block' : 'none';
+    updatePreview();
+  });
+
+  // Update preview while typing
+  amountEl.addEventListener('input', () => updatePreview());
+  customSymbolEl.addEventListener('input', () => updatePreview());
+  rateEl.addEventListener('input', () => {});
+  tenureEl.addEventListener('input', () => {});
+  tenureUnitEl.addEventListener('change', () => {});
+
+  // FD calculation functions (arrow functions)
+  // Simple interest: A = P + (P * r * t)
+  const calcSimpleInterest = (P, r, tYears) => {
+    const interest = P * (r/100) * tYears;
+    return { maturity: P + interest, interest };
+  };
+
+  // Compound interest (compounded n times per year): A = P * (1 + r/n)^(n*t)
+  const calcCompoundInterest = (P, r, tYears, n=1) => {
+    const A = P * Math.pow(1 + (r/100)/n, n * tYears);
+    const interest = A - P;
+    return { maturity: A, interest };
+  };
+
+  // Main calculate button handler
+  calcBtn.addEventListener('click', () => {
+    const P = parseFloat(amountEl.value);
+    if (isNaN(P) || P <= 0) {
+      alert('Please enter a valid amount (greater than 0).');
+      return;
+    }
+    let rate = parseFloat(rateEl.value) || 0;
+    let tenure = parseFloat(tenureEl.value) || 0;
+    const tenureUnit = tenureUnitEl.value;
+    if (tenureUnit === 'months') tenure = tenure / 12; // convert to years
+
+    const interestType = interestTypeEl.value;
+    const freq = parseInt(freqEl.value) || 1;
+
+    let res;
+    if (interestType === 'simple') {
+      res = calcSimpleInterest(P, rate, tenure);
+    } else {
+      res = calcCompoundInterest(P, rate, tenure, freq);
+    }
+
+    const currencyCode = currencyEl.value;
+    const customSymbol = (currencyCode === 'custom') ? (customSymbolEl.value.trim() || '¤') : null;
+    maturityEl.textContent = formatAmount(res.maturity, currencyCode === 'custom' ? null : currencyCode, customSymbol);
+    interestEarnedEl.textContent = `Interest Earned: ${formatAmount(res.interest, currencyCode === 'custom' ? null : currencyCode, customSymbol)}`;
+  });
+
+  // Reset
+  resetBtn.addEventListener('click', () => {
+    amountEl.value = '';
+    rateEl.value = '6.5';
+    tenureEl.value = '12';
+    tenureUnitEl.value = 'months';
+    interestTypeEl.value = 'compound';
+    freqEl.value = '1';
+    currencyEl.value = 'INR';
+    customSymbolEl.value = '';
+    customSymbolEl.style.display = 'none';
+    amountPreviewEl.textContent = 'Preview: —';
+    maturityEl.textContent = '—';
+    interestEarnedEl.textContent = '—';
+  });
+
+  // initial preview
+  updatePreview();
+</script>
+</body>
+</html>

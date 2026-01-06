@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+     <div class="card">
+       <div class="container">
+         <!-- <button id="theme-toggle">🌞</button> -->
+        <!-- <button id="theme-toggle">🌙</button> -->
+         <h1>Weather App</h1>
+  </div>  
+
+    <!-- Search box -->
+    <div class="search"> 
+      <input type="text" placeholder="Enter city name" spellcheck="false">
+      <button id="search-btn">Search</button>
+    </div>
+     
+    <p id="discription"></p>
+
+
+    <!-- Weather info -->
+    <div id="weather">
+      <i class="fas fa-cloud-sun-rain" style="font-size:50px; color:#31353a8c;"></i>
+      <h1 class="temp"></h1>
+      <h2 class="city"></h2>
+
+      <!-- Details section -->
+      <div class="details">
+        <div class="col">
+          <!-- SVG humidity icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="32" height="32">
+            <path d="M192 0C192 0 48 160 48 288C48 397 126 480 192 480C258 480 336 397 336 288C336 160 192 0 192 0z" fill="#00bfff"/>
+          </svg>
+          <p class="humidity">50%</p>
+          <p>Humidity</p>
+        </div>
+
+        <div class="col">
+          <i class="fas fa-wind"></i>
+          <p class="wind">15 Km/h</p>
+          <p>Wind Speed</p>
+        </div>
+         <div class="col">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p class="colud">55%</p>
+          <p>cloud cover</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
+  
